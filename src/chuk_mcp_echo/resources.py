@@ -7,13 +7,13 @@ Echo Service Resources - Async native resource implementations
 import asyncio
 import time
 from datetime import datetime
-from typing import Dict, Any
 
 from .server import echo_service
 
 # ============================================================================
 # Configuration Resource
 # ============================================================================
+
 
 @echo_service.resource("echo://config", mime_type="application/json")
 async def get_echo_config() -> dict:
@@ -28,52 +28,58 @@ async def get_echo_config() -> dict:
             "List processing and manipulation",
             "Number operations",
             "Delayed responses for async testing",
-            "Error simulation for testing"
+            "Error simulation for testing",
         ],
         "supported_operations": {
             "text": ["echo", "uppercase", "reverse"],
             "data": ["json_echo", "list_processing", "number_operations"],
-            "testing": ["delayed_response", "error_simulation"]
+            "testing": ["delayed_response", "error_simulation"],
         },
         "limits": {
             "max_delay_seconds": 10.0,
             "max_list_size": 1000,
-            "max_string_length": 10000
+            "max_string_length": 10000,
         },
-        "created_at": datetime.now().isoformat()
+        "created_at": datetime.now().isoformat(),
     }
+
 
 # ============================================================================
 # Status Resource
 # ============================================================================
 
+
 @echo_service.resource("echo://status", mime_type="application/json")
 async def get_echo_status() -> dict:
     """Get the current status of the echo service."""
     await asyncio.sleep(0.001)
+    start_time = echo_service.protocol.session_manager.sessions.get(
+        "start_time", time.time()
+    )
+    # Ensure start_time is a float for type checking
+    if not isinstance(start_time, (int, float)):
+        start_time = time.time()
     return {
         "status": "running",
-        "uptime_seconds": time.time() - echo_service.protocol.session_manager.sessions.get('start_time', time.time()),
-        "service_info": {
-            "name": "Echo Service",
-            "version": "0.1.0",
-            "ready": True
-        },
+        "uptime_seconds": time.time() - start_time,
+        "service_info": {"name": "Echo Service", "version": "0.1.0", "ready": True},
         "capabilities": {
             "tools_available": len(echo_service.get_tools()),
-            "resources_available": len(echo_service.get_resources())
+            "resources_available": len(echo_service.get_resources()),
         },
         "health": {
             "database": "not_applicable",
             "external_services": "not_applicable",
-            "memory_usage": "normal"
+            "memory_usage": "normal",
         },
-        "last_check": datetime.now().isoformat()
+        "last_check": datetime.now().isoformat(),
     }
+
 
 # ============================================================================
 # Examples Resource
 # ============================================================================
+
 
 @echo_service.resource("echo://examples", mime_type="application/json")
 async def get_usage_examples() -> dict:
@@ -85,131 +91,109 @@ async def get_usage_examples() -> dict:
             "basic_text_echo": {
                 "tool": "echo_text",
                 "arguments": {"message": "Hello, World!"},
-                "description": "Basic text echoing"
+                "description": "Basic text echoing",
             },
             "text_with_formatting": {
                 "tool": "echo_text",
-                "arguments": {
-                    "message": "Echo",
-                    "prefix": ">>> ",
-                    "suffix": " <<<"
-                },
-                "description": "Text echo with prefix and suffix"
+                "arguments": {"message": "Echo", "prefix": ">>> ", "suffix": " <<<"},
+                "description": "Text echo with prefix and suffix",
             },
             "text_transformations": [
                 {
                     "tool": "echo_uppercase",
                     "arguments": {"text": "make me loud"},
-                    "description": "Convert to uppercase"
+                    "description": "Convert to uppercase",
                 },
                 {
-                    "tool": "echo_reverse", 
+                    "tool": "echo_reverse",
                     "arguments": {"text": "reverse this"},
-                    "description": "Reverse the text"
-                }
+                    "description": "Reverse the text",
+                },
             ],
             "json_processing": {
                 "tool": "echo_json",
                 "arguments": {
-                    "data": {
-                        "name": "John Doe",
-                        "age": 30,
-                        "city": "New York"
-                    }
+                    "data": {"name": "John Doe", "age": 30, "city": "New York"}
                 },
-                "description": "Echo JSON with metadata"
+                "description": "Echo JSON with metadata",
             },
             "list_operations": [
                 {
                     "tool": "echo_list",
                     "arguments": {"items": [3, 1, 4, 1, 5, 9]},
-                    "description": "Basic list echo"
+                    "description": "Basic list echo",
                 },
                 {
                     "tool": "echo_list",
-                    "arguments": {
-                        "items": ["banana", "apple", "cherry"],
-                        "sort": True
-                    },
-                    "description": "Sort a list"
+                    "arguments": {"items": ["banana", "apple", "cherry"], "sort": True},
+                    "description": "Sort a list",
                 },
                 {
                     "tool": "echo_list",
-                    "arguments": {
-                        "items": [1, 2, 3, 4, 5],
-                        "reverse": True
-                    },
-                    "description": "Reverse a list"
-                }
+                    "arguments": {"items": [1, 2, 3, 4, 5], "reverse": True},
+                    "description": "Reverse a list",
+                },
             ],
             "number_operations": [
                 {
                     "tool": "echo_number",
                     "arguments": {"number": 10},
-                    "description": "Basic number echo"
+                    "description": "Basic number echo",
                 },
                 {
                     "tool": "echo_number",
-                    "arguments": {
-                        "number": 5,
-                        "multiply": 2,
-                        "add": 3
-                    },
-                    "description": "Number with operations: (5 * 2) + 3 = 13"
-                }
+                    "arguments": {"number": 5, "multiply": 2, "add": 3},
+                    "description": "Number with operations: (5 * 2) + 3 = 13",
+                },
             ],
             "testing_features": [
                 {
                     "tool": "echo_delay",
-                    "arguments": {
-                        "message": "Delayed response",
-                        "delay_seconds": 2.0
-                    },
-                    "description": "Test delayed response"
+                    "arguments": {"message": "Delayed response", "delay_seconds": 2.0},
+                    "description": "Test delayed response",
                 },
                 {
                     "tool": "echo_error",
                     "arguments": {"should_error": False},
-                    "description": "Test successful response"
+                    "description": "Test successful response",
                 },
                 {
                     "tool": "echo_error",
                     "arguments": {
                         "should_error": True,
-                        "error_message": "This is a test error"
+                        "error_message": "This is a test error",
                     },
-                    "description": "Test error handling"
-                }
+                    "description": "Test error handling",
+                },
             ],
             "service_introspection": {
                 "tool": "get_service_info",
                 "arguments": {},
-                "description": "Get service information"
-            }
+                "description": "Get service information",
+            },
         },
         "resource_examples": {
             "configuration": {
                 "uri": "echo://config",
-                "description": "Service configuration and features"
+                "description": "Service configuration and features",
             },
-            "status": {
-                "uri": "echo://status", 
-                "description": "Current service status"
-            },
+            "status": {"uri": "echo://status", "description": "Current service status"},
             "examples": {
                 "uri": "echo://examples",
-                "description": "This examples resource"
+                "description": "This examples resource",
             },
             "documentation": {
                 "uri": "echo://docs",
-                "description": "Comprehensive documentation"
-            }
-        }
+                "description": "Comprehensive documentation",
+            },
+        },
     }
+
 
 # ============================================================================
 # Documentation Resource
 # ============================================================================
+
 
 @echo_service.resource("echo://docs", mime_type="text/markdown")
 async def get_documentation() -> str:

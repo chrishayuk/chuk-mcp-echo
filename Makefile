@@ -92,9 +92,9 @@ test-cov:
 run:
 	@echo "Running server..."
 	@if command -v uv >/dev/null 2>&1; then \
-		PYTHONPATH=src uv run python -m chuk_protocol_server.server_launcher; \
+		PYTHONPATH=src uv run python -m chuk_mcp_echo.main; \
 	else \
-		PYTHONPATH=src python3 -m chuk_protocol_server.server_launcher; \
+		PYTHONPATH=src python3 -m chuk_mcp_echo.main; \
 	fi
 
 # Build the project using the pyproject.toml configuration

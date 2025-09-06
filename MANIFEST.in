@@ -1,0 +1,40 @@
+# Include documentation files
+include README.md
+include CLAUDE.md
+include LICENSE
+
+# Include configuration files
+include pyproject.toml
+include Makefile
+
+# Include lock file for reproducible builds
+include uv.lock
+
+# Include all source files
+recursive-include src *.py *.pyi *.typed
+
+# Include test files
+recursive-include tests *.py
+
+# Include example scripts
+recursive-include examples *.py
+
+# Include debug scripts
+recursive-include debug *.py
+
+# Exclude compiled files
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude __pycache__
+global-exclude *.so
+global-exclude *.dylib
+global-exclude *.dll
+
+# Exclude development artifacts
+exclude .gitignore
+exclude .git
+recursive-exclude .git *
+recursive-exclude .pytest_cache *
+recursive-exclude .mypy_cache *
+recursive-exclude .ruff_cache *
+recursive-exclude *.egg-info *

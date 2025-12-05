@@ -12,7 +12,7 @@ authors = [
     {name = "ChukMCP Server Team", email = "test@example.com"}
 ]
 dependencies = [
-    "chuk-mcp-server>=0.6",
+    "chuk-mcp-server>=0.14",
     # Additional dependencies for the echo service
     "pydantic>=2.11.7",
     "uvicorn>=0.35.0",
@@ -22,6 +22,7 @@ dependencies = [
 dev = [
     "pytest>=7.0.0",
     "pytest-asyncio>=0.21.0",
+    "pytest-cov>=5.0.0",
     "httpx>=0.24.0",
     "requests>=2.32.4",
     "black>=23.0.0",

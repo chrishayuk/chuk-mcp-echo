@@ -41,3 +41,8 @@ Thumbs.db
 .venv
 env/
 venv/
+
+# cache
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/

@@ -7,6 +7,7 @@ Echo Service Tools - Async native tool implementations
 import asyncio
 import time
 from datetime import datetime
+from typing import List
 
 from .server import echo_service
 
@@ -69,7 +70,9 @@ async def echo_json(data: dict) -> dict:
 
 
 @echo_service.tool()
-async def echo_list(items: list, sort: bool = False, reverse: bool = False) -> dict:
+async def echo_list(
+    items: List[str], sort: bool = False, reverse: bool = False
+) -> dict:
     """
     Echo a list back with processing options.
 

@@ -212,9 +212,9 @@ class TestServiceIntegration:
         ]
 
         for expected_tool in expected_tools:
-            assert expected_tool in tool_names, (
-                f"Tool {expected_tool} should be registered"
-            )
+            assert (
+                expected_tool in tool_names
+            ), f"Tool {expected_tool} should be registered"
 
         # Check expected resources
         resource_uris = [r.uri for r in resources]
@@ -226,9 +226,9 @@ class TestServiceIntegration:
         ]
 
         for expected_resource in expected_resources:
-            assert expected_resource in resource_uris, (
-                f"Resource {expected_resource} should be registered"
-            )
+            assert (
+                expected_resource in resource_uris
+            ), f"Resource {expected_resource} should be registered"
 
 
 if __name__ == "__main__":

@@ -130,6 +130,68 @@ class TestEchoTools:
         assert result["requested_delay"] == 0.1
         assert result["actual_delay"] >= 0.1
 
+    @pytest.mark.asyncio
+    async def test_echo_number(self):
+        """Test number operations."""
+        from chuk_mcp_echo.tools import echo_number
+
+        # Test with defaults
+        result = await echo_number(10)
+        assert result["original"] == 10
+        assert result["result"] == 10  # 10 * 1 + 0
+
+        # Test with multiply
+        result = await echo_number(10, multiply=2)
+        assert result["result"] == 20  # 10 * 2 + 0
+        assert result["operations"]["multiplied_by"] == 2
+
+        # Test with add
+        result = await echo_number(10, add=5)
+        assert result["result"] == 15  # 10 * 1 + 5
+        assert result["operations"]["added"] == 5
+
+        # Test with both
+        result = await echo_number(10, multiply=3, add=7)
+        assert result["result"] == 37  # 10 * 3 + 7
+
+    @pytest.mark.asyncio
+    async def test_echo_error(self):
+        """Test error handling."""
+        from chuk_mcp_echo.tools import echo_error
+
+        # Test success case
+        result = await echo_error(should_error=False)
+        assert result["status"] == "success"
+        assert "timestamp" in result
+
+        # Test error case
+        with pytest.raises(ValueError, match="Test error"):
+            await echo_error(should_error=True, error_message="Test error")
+
+    @pytest.mark.asyncio
+    async def test_get_service_info(self):
+        """Test service info retrieval."""
+        from chuk_mcp_echo.tools import get_service_info
+
+        result = await get_service_info()
+        assert "service" in result
+        assert result["service"]["name"] == "Echo Service"
+        assert "capabilities" in result
+        assert "tools_count" in result["capabilities"]
+        assert "resources_count" in result["capabilities"]
+        assert result["capabilities"]["tools_count"] > 0
+        assert result["capabilities"]["resources_count"] > 0
+
+    @pytest.mark.asyncio
+    async def test_echo_list_sort_error(self):
+        """Test list sorting with mixed types."""
+        from chuk_mcp_echo.tools import echo_list
+
+        # Test with mixed types that can't be sorted
+        result = await echo_list([1, "two", 3], sort=True)
+        # Should not crash, just skip sorting
+        assert result["count"] == 3
+
 
 class TestEchoResources:
     """Test all async echo resources."""
@@ -155,6 +217,49 @@ class TestEchoResources:
         assert "uptime_seconds" in status
         assert "service_info" in status
         assert status["service_info"]["ready"] is True
+
+    @pytest.mark.asyncio
+    async def test_get_echo_status_invalid_start_time(self):
+        """Test status resource with invalid start_time."""
+        from chuk_mcp_echo.resources import get_echo_status
+        from chuk_mcp_echo import echo_service
+        from unittest.mock import MagicMock
+
+        # Mock session_manager to return invalid start_time
+        original_sessions = echo_service.protocol.session_manager.sessions
+        try:
+            # Create a mock that returns invalid start_time
+            mock_sessions = MagicMock()
+            mock_sessions.get.return_value = "invalid"  # Not a number
+            echo_service.protocol.session_manager.sessions = mock_sessions
+
+            status = await get_echo_status()
+            # Should still work, falling back to current time
+            assert status["status"] == "running"
+            assert "uptime_seconds" in status
+        finally:
+            # Restore original
+            echo_service.protocol.session_manager.sessions = original_sessions
+
+    @pytest.mark.asyncio
+    async def test_get_usage_examples(self):
+        """Test usage examples resource."""
+        from chuk_mcp_echo.resources import get_usage_examples
+
+        examples = await get_usage_examples()
+        assert "description" in examples
+        assert "examples" in examples
+        assert "basic_text_echo" in examples["examples"]
+
+    @pytest.mark.asyncio
+    async def test_get_documentation(self):
+        """Test documentation resource."""
+        from chuk_mcp_echo.resources import get_documentation
+
+        docs = await get_documentation()
+        assert isinstance(docs, str)
+        assert "Echo Service Documentation" in docs
+        assert "## Overview" in docs
 
 
 class TestAsyncConcurrency:
@@ -212,9 +317,9 @@ class TestServiceIntegration:
         ]
 
         for expected_tool in expected_tools:
-            assert expected_tool in tool_names, (
-                f"Tool {expected_tool} should be registered"
-            )
+            assert (
+                expected_tool in tool_names
+            ), f"Tool {expected_tool} should be registered"
 
         # Check expected resources
         resource_uris = [r.uri for r in resources]
@@ -226,9 +331,9 @@ class TestServiceIntegration:
         ]
 
         for expected_resource in expected_resources:
-            assert expected_resource in resource_uris, (
-                f"Resource {expected_resource} should be registered"
-            )
+            assert (
+                expected_resource in resource_uris
+            ), f"Resource {expected_resource} should be registered"
 
 
 if __name__ == "__main__":

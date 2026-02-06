@@ -61,12 +61,20 @@ clean-all: clean-pyc clean-build clean-test
 # Install package
 install:
 	@echo "Installing package..."
-	pip install .
+	@if command -v uv >/dev/null 2>&1; then \
+		uv pip install .; \
+	else \
+		pip install .; \
+	fi
 
 # Install package in development mode
 dev-install:
 	@echo "Installing package in development mode..."
-	pip install -e .
+	@if command -v uv >/dev/null 2>&1; then \
+		uv pip install -e ".[dev]"; \
+	else \
+		pip install -e ".[dev]"; \
+	fi
 
 # Run tests
 test:

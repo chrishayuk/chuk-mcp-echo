@@ -4,13 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "chuk-mcp-echo"
-version = "0.1.3"
+version = "0.1.4"
 description = "Echo Service - ChukMCP Server Test Project"
 readme = "README.md"
 requires-python = ">=3.11"
-authors = [
-    {name = "ChukMCP Server Team", email = "test@example.com"}
-]
 dependencies = [
     "chuk-mcp-server>=0.14",
     # Additional dependencies for the echo service

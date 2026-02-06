@@ -2,6 +2,8 @@
 
 An async-native demonstration MCP (Model Context Protocol) service built using the ChukMCP Server framework. This service showcases various MCP capabilities including text processing, data manipulation, and testing features with full async/await support.
 
+> This is a demonstration project provided as-is for learning and testing purposes.
+
 ## Features
 
 - **Async-Native Architecture**: All tools and resources implemented with async/await
@@ -283,15 +285,11 @@ async def test_concurrent_requests():
 
 ## License
 
-MIT License - See LICENSE file for details
+Apache License 2.0 - See LICENSE.md for details.
 
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
-
-## Support
-
-For issues, questions, or suggestions, please open an issue on the GitHub repository.
 
 ## Acknowledgments
 
